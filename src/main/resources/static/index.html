@@ -1,0 +1,136 @@
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+  <title>suggest平台</title>
+</head>
+<style>
+  .highlight {
+      color: #ffc900;
+  }
+
+  .gray {
+      color: #999;
+      font-size: 12px;
+      margin-left: 15px;
+  }
+
+  .title {
+      font-weight: bold;
+  }
+
+</style>
+
+<body>
+<div id="app">
+  <el-row>
+    <el-col :span="7">
+      <div style="margin-top: 15px;">
+        <el-input placeholder="请输入内容" v-model="keywords">
+          <el-button slot="append" icon="el-icon-search" @click="suggest"></el-button>
+        </el-input>
+      </div>
+    </el-col>
+  </el-row>
+  <el-divider></el-divider>
+  <el-row>
+    <el-col :span="8">
+      <el-card class="box-card">
+        <div slot="header" class="clearfix">
+          <span class="title">Ctrip Suggest 结果</span>
+        </div>
+        <el-empty v-if="tableData[0] == undefined || tableData[0].length == 0" description="没有结果"></el-empty>
+        <div v-for="o in tableData[0]" class="text item" v-html="o.name">
+        </div>
+      </el-card>
+    </el-col>
+    <el-col :span="8">
+      <el-card class="box-card">
+        <div slot="header" class="clearfix">
+          <span class="title">Fliggy Suggest 结果</span>
+        </div>
+        <el-empty v-if="tableData[1] == undefined || tableData[1].length == 0" description="没有结果"></el-empty>
+        <div v-for="o in tableData[1]" class="text item" v-html="o.name">
+        </div>
+      </el-card>
+    </el-col>
+    <el-col :span="8">
+      <el-card class="box-card">
+        <div slot="header" class="clearfix">
+          <span class="title">Qunar Suggest 结果</span>
+        </div>
+        <el-empty v-if="tableData[2] == undefined || tableData[2].length == 0" description="没有结果"></el-empty>
+        <div v-for="o in tableData[2]" class="text item">
+          {{o.name }}
+        </div>
+      </el-card>
+    </el-col>
+  </el-row>
+  <el-row style="margin-top: 10px;">
+    <el-col :span="8">
+      <el-card class="box-card">
+        <div slot="header" class="clearfix">
+          <span class="title">马蜂窝 Suggest 结果</span>
+        </div>
+        <el-empty v-if="tableData[3] == undefined || tableData[3].length == 0" description="没有结果"></el-empty>
+        <div v-for="o in tableData[3]" class="text item" v-html="o.name">
+        </div>
+      </el-card>
+    </el-col>
+    <el-col :span="8">
+      <el-card class="box-card">
+        <div slot="header" class="clearfix">
+          <span class="title">同程旅游 Suggest 结果</span>
+        </div>
+        <el-empty v-if="tableData[4] == undefined || tableData[4].length == 0" description="没有结果"></el-empty>
+        <div v-for="o in tableData[4]" class="text item" v-html="o.name">
+        </div>
+      </el-card>
+    </el-col>
+  </el-row>
+</div>
+</body>
+<!-- import Vue before Element -->
+<script src="https://unpkg.com/vue@2/dist/vue.js"></script>
+<!-- import JavaScript -->
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+<script>
+  var vue = new Vue({
+      el: '#app',
+      data: {
+          keywords: '',
+          tableData: [],
+      },
+       mounted(){
+         this.tableData = new Array(5);
+         console.log(this.tableData[0]);
+       },
+       methods: {
+          suggest: function () {
+              console.log("======suggest=====" + this.keywords);
+              this.search_suggest(this.keywords);
+          },
+          search_suggest(keywords) {
+              $.ajax({
+                  url: "http://localhost:8080/suggest/search?keyword=" + keywords,
+                  type: "GET", success: function (response) {
+                      vue.tableData = new Array();
+                      vue.tableData.push(response['ctrip']);
+                      vue.tableData.push(response['fliggy']);
+                      vue.tableData.push(response['qunar']);
+                      vue.tableData.push(response['mafengwo']);
+                      vue.tableData.push(response['ly']);
+                      console.log(vue.tableData.length);
+                  }
+              })
+          }
+      }
+  })
+
+
+</script>
+
+</html>
